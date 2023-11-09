@@ -683,6 +683,9 @@ TEST_OBJS =
 TEST_PROGRAMS_NEED_X =
 UNIT_TEST_PROGRAMS =
 THIRD_PARTY_SOURCES =
+UNIT_TEST_PROGRAMS =
+UNIT_TEST_DIR = t/unit-tests
+UNIT_TEST_BIN = $(UNIT_TEST_DIR)/bin
 
 # Having this variable in your environment would break pipelines because
 # you cause "cd" to echo its destination to stdout.  It can also take
@@ -1335,6 +1338,12 @@ THIRD_PARTY_SOURCES += compat/poll/%
 THIRD_PARTY_SOURCES += compat/regex/%
 THIRD_PARTY_SOURCES += sha1collisiondetection/%
 THIRD_PARTY_SOURCES += sha1dc/%
+
+UNIT_TEST_PROGRAMS += t-basic
+UNIT_TEST_PROGRAMS += t-strbuf
+UNIT_TEST_PROGS = $(patsubst %,$(UNIT_TEST_BIN)/%$X,$(UNIT_TEST_PROGRAMS))
+UNIT_TEST_OBJS = $(patsubst %,$(UNIT_TEST_DIR)/%.o,$(UNIT_TEST_PROGRAMS))
+UNIT_TEST_OBJS += $(UNIT_TEST_DIR)/test-lib.o
 
 # xdiff and reftable libs may in turn depend on what is in libgit.a
 GITLIBS = common-main.o $(LIB_FILE) $(XDIFF_LIB) $(REFTABLE_LIB) $(LIB_FILE)
@@ -3679,7 +3688,7 @@ clean: profile-clean coverage-clean cocciclean
 	$(RM) headless-git.o
 	$(RM) $(LIB_FILE) $(XDIFF_LIB) $(REFTABLE_LIB) $(REFTABLE_TEST_LIB)
 	$(RM) $(ALL_PROGRAMS) $(SCRIPT_LIB) $(BUILT_INS) $(OTHER_PROGRAMS)
-	$(RM) $(TEST_PROGRAMS)
+	$(RM) $(TEST_PROGRAMS) $(UNIT_TEST_PROGS)
 	$(RM) $(FUZZ_PROGRAMS)
 	$(RM) $(SP_OBJ)
 	$(RM) $(HCC)
@@ -3859,6 +3868,7 @@ $(FUZZ_PROGRAMS): all
 
 fuzz-all: $(FUZZ_PROGRAMS)
 
+<<<<<<< HEAD
 t/unit-tests/t-basic$X: t/unit-tests/t-basic.o t/unit-tests/test-lib.o $(GITLIBS) GIT-LDFLAGS
 	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ $(ALL_LDFLAGS) \
 		 $(filter %.o,$^) $(filter %.a,$^) $(LIBS)
@@ -3869,3 +3879,16 @@ t/unit-tests/t-strbuf$X: t/unit-tests/t-strbuf.o t/unit-tests/test-lib.o $(GITLI
 
 .PHONY: unit-tests
 unit-tests: $(UNIT_TEST_PROGS)
+=======
+$(UNIT_TEST_BIN):
+	@mkdir -p $(UNIT_TEST_BIN)
+
+$(UNIT_TEST_PROGS): $(UNIT_TEST_BIN)/%$X: $(UNIT_TEST_DIR)/%.o $(UNIT_TEST_DIR)/test-lib.o $(GITLIBS) GIT-LDFLAGS $(UNIT_TEST_BIN)
+	$(QUIET_LINK)$(CC) $(ALL_CFLAGS) -o $@ $(ALL_LDFLAGS) \
+		$(filter %.o,$^) $(filter %.a,$^) $(LIBS)
+
+.PHONY: build-unit-tests unit-tests
+build-unit-tests: $(UNIT_TEST_PROGS)
+unit-tests: $(UNIT_TEST_PROGS)
+	$(MAKE) -C t/ unit-tests
+>>>>>>> e137fe3b29 (unit tests: add TAP unit test framework)

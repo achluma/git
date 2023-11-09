@@ -157,12 +157,12 @@ int test__run_end(int was_run UNUSED, const char *location, const char *format, 
 	va_end(ap);
 	ctx.running = 0;
 	if (ctx.skip_all)
-		return 0;
+		return 1;
 	putc('\n', stdout);
 	fflush(stdout);
 	ctx.failed |= ctx.result == RESULT_FAILURE;
 
-	return -(ctx.result == RESULT_FAILURE);
+	return ctx.result != RESULT_FAILURE;
 }
 
 static void test_fail(void)
@@ -194,8 +194,9 @@ int test_assert(const char *location, const char *check, int ok)
 
 	if (ctx.result == RESULT_SKIP) {
 		test_msg("skipping check '%s' at %s", check, location);
-		return 0;
-	} else if (!ctx.todo) {
+		return 1;
+	}
+	if (!ctx.todo) {
 		if (ok) {
 			test_pass();
 		} else {
@@ -204,7 +205,7 @@ int test_assert(const char *location, const char *check, int ok)
 		}
 	}
 
-	return -!ok;
+	return !!ok;
 }
 
 void test__todo_begin(void)
@@ -222,15 +223,15 @@ int test__todo_end(const char *location, const char *check, int res)
 
 	ctx.todo = 0;
 	if (ctx.result == RESULT_SKIP)
-		return 0;
-	if (!res) {
+		return 1;
+	if (res) {
 		test_msg("todo check '%s' succeeded at %s", check, location);
 		test_fail();
 	} else {
 		test_todo();
 	}
 
-	return -!res;
+	return !res;
 }
 
 int check_bool_loc(const char *loc, const char *check, int ok)
@@ -245,7 +246,7 @@ int check_int_loc(const char *loc, const char *check, int ok,
 {
 	int ret = test_assert(loc, check, ok);
 
-	if (ret) {
+	if (!ret) {
 		test_msg("   left: %"PRIdMAX, a);
 		test_msg("  right: %"PRIdMAX, b);
 	}
@@ -258,7 +259,7 @@ int check_uint_loc(const char *loc, const char *check, int ok,
 {
 	int ret = test_assert(loc, check, ok);
 
-	if (ret) {
+	if (!ret) {
 		test_msg("   left: %"PRIuMAX, a);
 		test_msg("  right: %"PRIuMAX, b);
 	}
@@ -289,7 +290,7 @@ int check_char_loc(const char *loc, const char *check, int ok, char a, char b)
 {
 	int ret = test_assert(loc, check, ok);
 
-	if (ret) {
+	if (!ret) {
 		fflush(stderr);
 		print_char("   left", a);
 		print_char("  right", b);
@@ -318,7 +319,7 @@ int check_str_loc(const char *loc, const char *check,
 	int ok = (!a && !b) || (a && b && !strcmp(a, b));
 	int ret = test_assert(loc, check, ok);
 
-	if (ret) {
+	if (!ret) {
 		fflush(stderr);
 		print_str("   left", a);
 		print_str("  right", b);

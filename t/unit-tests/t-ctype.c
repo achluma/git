@@ -56,7 +56,7 @@ TEST_CTYPE_FUNC(isxdigit, DIGIT "abcdefABCDEF")
 TEST_CTYPE_FUNC(isprint, LOWER UPPER DIGIT PUNCT " ")
 
 int cmd_main(int argc, const char **argv) {
-    /* Run all character type tests */
+	/* Run all character type tests */
 	TEST(test_ctype_isspace(), "isspace() works as we expect");
 	TEST(test_ctype_isdigit(), "isdigit() works as we expect");
 	TEST(test_ctype_isalpha(), "isalpha() works as we expect");

@@ -10,7 +10,6 @@ static const char * const test_tool_usage[] = {
 };
 
 static struct test_cmd cmds[] = {
-	{ "advise", cmd__advise_if_enabled },
 	{ "bitmap", cmd__bitmap },
 	{ "bloom", cmd__bloom },
 	{ "bundle-uri", cmd__bundle_uri },

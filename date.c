@@ -1402,3 +1402,11 @@ int date_overflows(timestamp_t t)
 	sys = t;
 	return t != sys || (t < 1) != (sys < 1);
 }
+
+int check_prereq_TIME_IS_64BIT(void) {
+    	return sizeof(timestamp_t) == 8;
+}
+
+int check_prereq_TIME_T_IS_64BIT(void) {
+    	return sizeof(time_t) == 8;
+}

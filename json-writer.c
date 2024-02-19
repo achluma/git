@@ -46,7 +46,7 @@ static void append_quoted_string(struct strbuf *out, const char *in)
 
 static void indent_pretty(struct json_writer *jw)
 {
-	strbuf_addbstrings(&jw->json, " ", jw->open_stack.len);
+	strbuf_addstrings(&jw->json, " ", jw->open_stack.len);
 }
 
 /*

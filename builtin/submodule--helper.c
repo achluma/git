@@ -260,7 +260,7 @@ static char *get_up_path(const char *path)
 	int i;
 	struct strbuf sb = STRBUF_INIT;
 
-	strbuf_addbstrings(&sb, "../", count_slashes(path));
+	strbuf_addstrings(&sb, "../", count_slashes(path));
 
 	/*
 	 * Check if 'path' ends with slash or not

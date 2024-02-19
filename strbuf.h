@@ -311,6 +311,15 @@ static inline void strbuf_addstr(struct strbuf *sb, const char *s)
 }
 
 /**
+ * Copy the contents of given pattern at the end of the buffer.
+ */
+static inline void strbuf_addstrings(struct strbuf *sb, const char *pattern, size_t repetitions)
+{
+	for (size_t i = 0; i < repetitions; i++)
+        	strbuf_addstr(sb, pattern);
+}
+
+/**
  * Copy the contents of another buffer at the end of the current one.
  */
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2);

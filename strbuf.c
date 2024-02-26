@@ -302,6 +302,17 @@ void strbuf_add(struct strbuf *sb, const void *data, size_t len)
 	strbuf_setlen(sb, sb->len + len);
 }
 
+void strbuf_addstrings(struct strbuf *sb, const char *s, size_t n)
+{
+	size_t len = strlen(s);
+	if (unsigned_mult_overflows(len, n))
+		die("you want to use way too much memory");
+	strbuf_grow(sb, len * n);
+	for (size_t i = 0; i < n; i++)
+		memcpy(sb->buf + sb->len + len * i, s, len);
+	strbuf_setlen(sb, sb->len + len * n);
+}
+
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2)
 {
 	strbuf_grow(sb, sb2->len);
